@@ -37,7 +37,7 @@ parse_cal(char *cal_str){
 
 int main(){
 
-    FILE *f = fopen("input.txt", "r");
+    FILE *f = fopen("i", "r");
     char line[10];
    
     int calories = 0,
@@ -65,8 +65,7 @@ int main(){
         strip(line);
         calories += parse_cal(line);
     }
-    printf("FIRST TASK: %d\n", first);
-    printf("SECOND TASK: %d\n", first+second+third);
+    printf("%d %d\n", first, first+second+third);
 
     return 0;
 }
