@@ -106,42 +106,45 @@ int main(){
 	}
 
     int distance = -1;
-    q_item *p;
+    q_item *tmp, p;
     while (q.count > 0){
 
-        p = q_front(&q);
+        tmp = q_front(&q);
+        p.row = tmp->row;
+        p.col = tmp->col;
+        p.dist = tmp->dist;
 
-        if (map[p->row][p->col] == '{'){
-            distance = p->dist;
+        if (map[p.row][p.col] == '{'){
+            distance = p.dist;
             break;
         }
 
         // ^
-        if ( p->row-1 >= 0 && (map[p->row-1][p->col]-map[p->row][p->col])<=1
-             && map_visited[p->row-1][p->col] == 0){
-            q_append(&q, q_item_create(p->row-1, p->col, p->dist+1));
-            map_visited[p->row-1][p->col] = 1;
+        if ( p.row-1 >= 0 && (map[p.row-1][p.col]-map[p.row][p.col])<=1
+             && map_visited[p.row-1][p.col] == 0){
+            q_append(&q, q_item_create(p.row-1, p.col, p.dist+1));
+            map_visited[p.row-1][p.col] = 1;
         }
 
         // ˇ
-        if ( p->row+1 < H && (map[p->row+1][p->col]-map[p->row][p->col])<=1
-             && map_visited[p->row+1][p->col] == 0){
-            q_append(&q, q_item_create(p->row+1, p->col, p->dist+1));
-            map_visited[p->row+1][p->col] = 1;
+        if ( p.row+1 < H && (map[p.row+1][p.col]-map[p.row][p.col])<=1
+             && map_visited[p.row+1][p.col] == 0){
+            q_append(&q, q_item_create(p.row+1, p.col, p.dist+1));
+            map_visited[p.row+1][p.col] = 1;
         }
 
         // <
-        if ( p->col-1 >= 0 && (map[p->row][p->col-1]-map[p->row][p->col])<=1
-             && map_visited[p->row][p->col-1] == 0){
-            q_append(&q, q_item_create(p->row, p->col-1, p->dist+1));
-            map_visited[p->row][p->col-1] = 1;
+        if ( p.col-1 >= 0 && (map[p.row][p.col-1]-map[p.row][p.col])<=1
+             && map_visited[p.row][p.col-1] == 0){
+            q_append(&q, q_item_create(p.row, p.col-1, p.dist+1));
+            map_visited[p.row][p.col-1] = 1;
         }
 
         // <
-        if ( p->col+1 < W && (map[p->row][p->col+1]-map[p->row][p->col])<=1
-             && map_visited[p->row][p->col+1] == 0){
-            q_append(&q, q_item_create(p->row, p->col+1, p->dist+1));
-            map_visited[p->row][p->col+1] = 1;
+        if ( p.col+1 < W && (map[p.row][p.col+1]-map[p.row][p.col])<=1
+             && map_visited[p.row][p.col+1] == 0){
+            q_append(&q, q_item_create(p.row, p.col+1, p.dist+1));
+            map_visited[p.row][p.col+1] = 1;
         }
         // putc('\n', stdout);
 

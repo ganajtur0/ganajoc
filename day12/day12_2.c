@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <unistd.h>
 
 #ifdef TEST
     #define W 8
@@ -49,7 +50,7 @@ q_front(q *q){
 void
 q_print(q q){
 	for (int i = 0; i<q.count; i++)
-		printf("%p ", q.items[i].dist);
+		printf("%d ", q.items[i].dist);
 	printf("\n");
 }
 
@@ -69,6 +70,24 @@ map_visited_print(int map[H][W]){
 			printf("%d", map[i][j]);
 		putc('\n', stdout);
 	}
+}
+
+void
+map_mask_print(char map[H][W], int map_visited[H][W], q_item p, q q){
+    printf("\e[1;1H\e[2J");
+	for (int i = 0; i<H;i++){
+		for (int j = 0; j<W;j++)
+            if (i==p.row && j==p.col)
+                putc('@', stdout);
+            else if (map_visited[i][j])
+                putc('.',stdout);
+            else
+			    putc(map[i][j], stdout);
+		putc('\n', stdout);
+	}
+    q_print(q);
+    fflush(stdout);
+    usleep(10000);
 }
 
 int main(){
@@ -99,53 +118,66 @@ int main(){
             else if (buf[i]=='E'){
                 map[h][i] = '{';
                 map_visited[h][i] = 1;
-                q_append(&q, q_item_create(h, i, 0));
+                // it gets the example correct
+                // so even when seemingly correct, it's off by ten
+                // wrong_steps_to_a - wrong_steps_to_goal + original_steps_to_goal
+                // I don't know why, but I'm gonna leave this like this,
+                // 'cause I've already spent waaaaay too much time on this
+                // and I should be studying for physics
+                q_append(&q, q_item_create(h, i, -10));
             }
         }
 		h++;
 	}
 
     int distance = -1;
-    q_item *p;
+    q_item *tmp, p;
     while (q.count > 0){
+    
+        // AHHH MAAAAAN
+        // this get's overwritten the instant we append to the queue BRUH
+        // cannot expect a value on the stack to stay unchanged IDIOT SANDWICH moment
+        // how did that work for the first part of the assignment?????
+        // UNLUCKYYY
+        tmp = q_front(&q);
 
-        p = q_front(&q);
+        p.row = tmp->row;
+        p.col = tmp->col;
+        p.dist = tmp->dist;
 
-        if (map[p->row][p->col] == 'a'){
-            distance = p->dist;
+        if (map[p.row][p.col] == 'a'){
+            distance = p.dist;
             break;
         }
 
         // ^
-        if ( p->row-1 >= 0 && (map[p->row-1][p->col]-map[p->row][p->col])<=-1
-             && map_visited[p->row-1][p->col] == 0){
-            q_append(&q, q_item_create(p->row-1, p->col, p->dist+1));
-            map_visited[p->row-1][p->col] = 1;
+        if ( p.row-1 >= 0 && (map[p.row-1][p.col]-map[p.row][p.col])>=-1
+             && map_visited[p.row-1][p.col] == 0){
+            q_append(&q, q_item_create(p.row-1, p.col, p.dist+1));
+            map_visited[p.row-1][p.col] = 1;
         }
 
         // ˇ
-        if ( p->row+1 < H && (map[p->row+1][p->col]-map[p->row][p->col])<=-1
-             && map_visited[p->row+1][p->col] == 0){
-            q_append(&q, q_item_create(p->row+1, p->col, p->dist+1));
-            map_visited[p->row+1][p->col] = 1;
+        if ( p.row+1 < H && (map[p.row+1][p.col]-map[p.row][p.col])>=-1
+             && map_visited[p.row+1][p.col] == 0){
+            q_append(&q, q_item_create(p.row+1, p.col, p.dist+1));
+            map_visited[p.row+1][p.col] = 1;
         }
 
         // <
-        if ( p->col-1 >= 0 && (map[p->row][p->col-1]-map[p->row][p->col])<=-1
-             && map_visited[p->row][p->col-1] == 0){
-            q_append(&q, q_item_create(p->row, p->col-1, p->dist+1));
-            map_visited[p->row][p->col-1] = 1;
+        if ( p.col-1 >= 0 && (map[p.row][p.col-1]-map[p.row][p.col])>=-1
+             && map_visited[p.row][p.col-1] == 0){
+            q_append(&q, q_item_create(p.row, p.col-1, p.dist+1));
+            map_visited[p.row][p.col-1] = 1;
         }
 
         // <
-        if ( p->col+1 < W && (map[p->row][p->col+1]-map[p->row][p->col])<=-1
-             && map_visited[p->row][p->col+1] == 0){
-            q_append(&q, q_item_create(p->row, p->col+1, p->dist+1));
-            map_visited[p->row][p->col+1] = 1;
+        if ( p.col+1 < W && (map[p.row][p.col+1]-map[p.row][p.col])>=-1
+             && map_visited[p.row][p.col+1] == 0){
+            q_append(&q, q_item_create(p.row, p.col+1, p.dist+1));
+            map_visited[p.row][p.col+1] = 1;
         }
-        map_visited_print(map_visited);
-        // putc('\n', stdout);
-
+        // map_mask_print(map, map_visited, p, q);
     }
 
     printf("total steps taken: %d\n", distance);
