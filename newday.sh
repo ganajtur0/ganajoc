@@ -20,8 +20,8 @@ touch test
 
 touch "$newdir.c"
 
-printf "#include<stdio.h>\nint\nmain(){\n\treturn 0;\n}" > "$newdir.c"
+printf "#include <stdio.h>\n#include <stdlib.h>\n\nint\nmain(int argc, char *argv[]){\n\n\treturn 0;\n}" > "$newdir.c"
 
 touch Makefile
 
-printf "main: $newdir.c\n\tcc -o ./exe/main $newdir.c && ./exe/main" > Makefile
+printf "main: $newdir.c\n\tcc -o ./exe/main $newdir.c && ./exe/main\ntest: $newdir.c\n\tcc -DDEBUG -o ./exe/test $newdir.c && ./exe/test" > Makefile
