@@ -45,15 +45,19 @@ eat_next_unsigned_long(char **line) {
 }
 
 int
-eat_next_int(char **line) {
+eat_next_int(char **line, int *could_parse) {
 
 	char buffer[20] = {0};
-	while (!isdigit(**line)) {
+	while (!isdigit(**line) && **line != '-') {
 		(*line)++;
-		if (**line == '\n' || **line == '\0')
+		if (**line == '\n' || **line == '\0') {
+			*could_parse = 0;
+			// backwards compatibility (i'm a very serious programmer)
 			return -1;
+		}
 	}
 	for (int i = 0; !(isspace(**line)); buffer[i++] = **line, (*line)++);
+	*could_parse = 1;
 	return atoi(buffer);
 }
 
