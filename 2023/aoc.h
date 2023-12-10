@@ -6,6 +6,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#define MAX(x, y) ( x > y ? x : y )
+#define MIN(x, y) ( x < y ? x : y )
+
 static inline int
 line_is_empty( char *line ) {
 	while ( *line != '\0' ){

@@ -50,7 +50,7 @@ next_value( IntStack history ) {
 	if (allzeros) return history.array[history.length-1];
 	return (history.array[history.length-1] + next_value(diff));
 }
-/*
+
 int
 next_value_pt2( IntStack history ) {
 	IntStack diff;
@@ -62,9 +62,9 @@ next_value_pt2( IntStack history ) {
 		diff.array[i-1] = d;
 	}
 	if (allzeros) return history.array[0];
-	return (history.array[0] - next_value(diff));
+	// should name these functions better
+	return (history.array[0] - next_value_pt2(diff));
 }
-*/
 
 void
 part_1_solution ( IntStack values[LINES] ) {
@@ -73,14 +73,12 @@ part_1_solution ( IntStack values[LINES] ) {
 	printf("Part 1 solution: %d\n", acc);
 }
 
-/*
 void
 part_2_solution ( IntStack values[LINES] ) {
 	int acc = 0;
 	for (int i = 0; i<LINES; acc+=next_value_pt2(values[i++]) );
 	printf("Part 2 solution: %d\n", acc);
 }
-*/
 
 int
 main(int argc, char *argv[]){
@@ -103,10 +101,10 @@ main(int argc, char *argv[]){
 	}
 
 	// this print statement is crucial for the testcase to not get segfaulted. cool
-	for ( int i = 0; i<LINES; intstack_print(values[i++]) );
+	// for ( int i = 0; i<LINES; intstack_print(values[i++]) );
 
-	part_1_solution(values);
-	// part_2_solution(values);
+	// part_1_solution(values);
+	part_2_solution(values);
 
 	free(line);
 	fclose(fp);
