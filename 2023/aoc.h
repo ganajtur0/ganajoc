@@ -63,6 +63,71 @@ size_t getline(char **lineptr, size_t *n, FILE *stream) {
 #define MAX(x, y) ( x > y ? x : y )
 #define MIN(x, y) ( x < y ? x : y )
 
+#define PRINT_ERROR(...) fprintf(stderr, __VA_ARGS__)
+
+typedef
+struct {
+    int width;
+    int height;
+    int line_num;
+    char **matrix;
+} CharMatrix;
+
+// if the height is zero, the default (10) height will be used
+CharMatrix
+charmatrix_create( const int width, const int height ) {
+    CharMatrix cm;
+    cm.width = width;
+    cm.height = (height ? height : 10);
+    cm.line_num = 0;
+    cm.matrix = (char**)malloc( cm.height * sizeof(char*) );
+    for ( int i = 0; i<cm.height; ++i )
+        cm.matrix[i] = (char*)malloc( cm.width );
+    return cm;
+}
+
+int
+charmatrix_add_line ( CharMatrix *cm, char *const line, const char line_end ) {
+    if ( (cm->line_num) == (cm->height) ) {
+        (cm->height)+=10;
+        char **newptr = (char**)realloc( cm->matrix, cm->height * sizeof(char*) );
+        if ( newptr == NULL ) {
+            PRINT_ERROR("Allocation for CharMatrix failed!\n");
+            free(cm->matrix);
+            return -1;
+        }
+        cm->matrix = newptr;
+        for ( int i = cm->line_num; i<cm->height; ++i ) {
+            cm->matrix[i] = (char*)malloc( cm->width );
+        }
+    }
+    char *iter = line;
+    for ( int i = 0; i < cm->width && *iter != line_end; ++i, ++iter ) {
+        ((cm->matrix)[(cm->line_num)])[i] = *iter;
+    }
+    (cm->line_num)++;
+    return cm->height;
+}
+
+void
+charmatrix_free( CharMatrix *cm ) {
+    for ( int i = 0; i<cm->line_num; ++i ) {
+        free(cm->matrix[i]);
+    }
+    free(cm->matrix);
+}
+
+void
+charmatrix_print( CharMatrix cm ) {
+    if (cm.line_num == -1) printf("-- Empty --");
+    else {
+        for ( int i = 0; i<cm.line_num; ++i ) {
+            for ( int j = 0; j<cm.width; putchar(cm.matrix[i][j++]));
+            putchar('\n');
+        }
+    }
+}
+
 static inline int
 line_is_empty( char *line ) {
 	while ( *line != '\0' ){

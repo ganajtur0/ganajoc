@@ -24,4 +24,4 @@ printf "#include <stdio.h>\n#include <stdlib.h>\n\nint\nmain(int argc, char *arg
 
 touch Makefile
 
-printf "main: $newdir.c\n\tcc -o ./exe/main $newdir.c && ./exe/main\ntest: $newdir.c\n\tcc -DDEBUG -o ./exe/test $newdir.c && ./exe/test" > Makefile
+printf "main: $newdir.c\n\tcc -o ./exe/main $newdir.c && ./exe/main\ntest: $newdir.c\n\tcc -DDEBUG -o ./exe/test $newdir.c && ./exe/test\ndebug: $newdir.c\n\tcc -ggdb -DDEBUG -o ./exe/debug && gdb ./exe/debug" > Makefile

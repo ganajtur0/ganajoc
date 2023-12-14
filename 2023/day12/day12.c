@@ -13,7 +13,7 @@
 
 typedef
 struct {
-	char list[100];
+	char list[150];
 	int list_len;
 } CharList; 
 
@@ -124,7 +124,6 @@ intlist_five_times (IntList *intlist) {
 		for ( int j = 0; j<prev_len; ++j) {
 			intlist->list[(intlist->list_len)++] = tmp.list[j];
 		}
-		intlist->list[(intlist->list_len)++] = '?';
 	}
 }
 
@@ -194,12 +193,26 @@ part_2_solution( CharList arrangements[ROWS], IntList groups[ROWS] ) {
 		charlist_five_times(&(arrangements[r]));
 		intlist_five_times(&(groups[r]));
 
+		print_solution(arrangements[r], groups[r]);
+
 		// choosing M elements from N elements
 		M = intlist_sum(groups[r]) - char_sum(arrangements[r], '#');
 		N = char_sum(arrangements[r], '?');
 	
 		p = malloc( sizeof(int) * (N+2) );
+		if ( p == NULL ) {
+			printf("Could not allocate %d bytes\n", (N+2) * sizeof(int));
+		}
+		else {
+			printf("Succesfully allocated %d long array of integers for p\n", N+2);
+		}
 		b = malloc( sizeof(int) * N );
+		if ( b == NULL ) {
+			printf("Could not allocate %d bytes for b\n", N * sizeof(int) );
+		}
+		else {
+			printf("Succesfully allocated %d long arraoy of integers for b\n", N);
+		}
 
 		inittwiddle(M, N, p);
 
@@ -261,7 +274,7 @@ main(int argc, char *argv[]){
 	}
 
 	part_1_solution(arrangements, groups);
-	// part_2_solution(arrangements, groups);
+	part_2_solution(arrangements, groups);
 
 	free(line);
 	fclose(fp);

@@ -98,7 +98,7 @@ int m, n, *p;
   {
   int i;
   p[0] = n+1;
-  for(i = 1; i != n-m+1; i++)
+  for(i = 1; i < n-m+1; i++)
     p[i] = 0;
   while(i != n+1)
     {
