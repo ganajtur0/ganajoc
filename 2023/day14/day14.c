@@ -32,6 +32,16 @@ part_1_solution(char dish[X][X]) {
 	printf("Part 1 solution: %d\n", acc);
 }
 
+int
+dish_compare(char d1[X][X], char d2[X][X]) {
+	for ( int i = 0; i<X; ++i ) {
+		for ( int j = 0; j<X; ++j ) {
+			if (d1[i][j] != d2[i][j]) return 0;
+		}
+	}
+	return 1;
+}
+
 void
 cycle(char dish[X][X]) {
 	// NORTH
@@ -50,6 +60,7 @@ cycle(char dish[X][X]) {
 			}
 		}
 	}
+	
 	// WEST
 	for ( int i = 0; i<X; ++i ) {
 		for ( int j = 0; j<X; ++j ) {
@@ -68,7 +79,7 @@ cycle(char dish[X][X]) {
 	}
 	//SOUTH
 	for ( int i = 0; i<X; ++i ) {
-		for ( int j = 0; j<X; ++j ) {
+		for ( int j = X-1; j>=0; --j ) {
 			if ( dish[j][i] == 'O' ) {
 				int y = 0;
 				for ( y = j+1; y<X; ++y ) {
@@ -84,7 +95,7 @@ cycle(char dish[X][X]) {
 	}
 	//EAST
 	for ( int i = 0; i<X; ++i ) {
-		for ( int j = 0; j<X; ++j ) {
+		for ( int j = X-1; j>=0; --j ) {
 			if ( dish[i][j] == 'O' ) {
 				int x = 0;
 				for ( x = j+1; x<X; ++x ) {
@@ -100,6 +111,17 @@ cycle(char dish[X][X]) {
 	}
 }
 
+void
+print_dish(char dish[X][X]) {
+	for ( int i = 0; i<X; ++i ) {
+		for ( int j = 0; j<X; ++j ) {
+			putchar(dish[i][j]);
+		}
+		putchar('\n');
+	}
+
+}
+
 int
 main(int argc, char *argv[]){
 
@@ -112,19 +134,31 @@ main(int argc, char *argv[]){
 	int i = 0;
 	while ( (read = getline(&line, &line_len, fp)) != -1 ) {
 		int j = 0;
-		for ( char *iter = line; *iter != '\n', j < X; dish[i][j++] = *(iter++) );
+		for ( char *iter = line; *iter != '\n' && j < X; dish[i][j++] = *(iter++) );
 		++i;
 	}
 
-	// part_1_solution(dish);
-	cycle(dish);
+	putchar('\n');
 
+	// part_1_solution(dish);
+	
+	char cycle1[X][X];
 	for ( int i = 0; i<X; ++i ) {
 		for ( int j = 0; j<X; ++j ) {
-			putchar(dish[i][j]);
-		}
-		putchar('\n');
+			cycle1[i][j] = dish[i][j];
+		} 
 	}
+
+
+	for ( int i = 0; i<1000; ++i) {
+		printf("%d\n", i );
+		cycle(cycle1);
+		cycle(dish);
+		cycle(dish);
+		cycle(dish);
+		if ( dish_compare(dish, cycle1) ) { printf("Repeats after %d cycles\n", i*3); break; }
+	}
+
 
 
 	return 0;
