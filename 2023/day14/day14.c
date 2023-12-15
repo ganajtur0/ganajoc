@@ -11,7 +11,7 @@
 #endif
 
 int
-total_load (char dish[X][X]) {
+total_load (char** dish) {
 	int total = 0;
 	for ( int i = 0; i<X; ++i ) {
 		for ( int j = 0; j<X; ++j ) {
@@ -44,7 +44,7 @@ part_1_solution(char dish[X][X]) {
 }
 
 int
-dish_compare(char d1[X][X], char d2[X][X]) {
+dish_compare(char** d1, char d2[X][X]) {
 	for ( int i = 0; i<X; ++i ) {
 		for ( int j = 0; j<X; ++j ) {
 			if (d1[i][j] != d2[i][j]) return 0;
@@ -151,24 +151,44 @@ main(int argc, char *argv[]){
 
 	putchar('\n');
 
-	char states[1000][X][X];
-	// int state_len;
+	// the stack cannot handle a statically allocated char [1000][100][100] ( which is reasonable )
+	char*** states = (char***)malloc( sizeof(char**) * 1000 );
+	for ( int i = 0; i<1000; ++i ) {
+		states[i] = (char**)malloc( sizeof(char*) * X );
+		for ( int j = 0; j<X; ++j ) {
+			states[i][j] = (char*)malloc( X );
+		}
+	}
 
-	// part_1_solution(dish);
-
-	for ( int c = 0; c<1000; ++c ) {
+	int c, _c, repeat = 0; 
+	for ( c = 0; c<1000; ++c ) {
 		for ( int i = 0; i<X; ++i ) {
 			for ( int j = 0; j<X; ++j ) {
 				states[c][i][j] = dish[i][j];
 			} 
 		}
 		cycle(dish);
-		for ( int _c = 0; _c < c; ++c ) {
+		for ( _c = 0; _c < c; ++_c ) {
 			if ( dish_compare(states[_c], dish) ) {
-				printf("dish after cycle %d = state at cycle %d\n", c, _c);
+				repeat = 1;
+				printf("dish after cycle %d = state at cycle %d\n", c+1, _c);
+				break;
 			}
 		}
+		if (repeat)
+			break;
 	}
+
+	// again - thanks to hyper-neutrino
+	printf("%d\n", total_load(states[ (1000000000 - _c) % (c+1 - _c) + _c ]));
+
+	for ( int i = 0; i<1000; ++i ) {
+		for ( int j = 0; j<X; ++j ) {
+			free(states[i][j]);
+		}
+		free(states[i]);
+	}
+	free(states);
 
 	return 0;
 }

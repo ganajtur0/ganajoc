@@ -31,7 +31,7 @@ reflection( CharMatrix cm ) {
 			if (!found) break;
 		}
 		if ( found ) {
-			printf("%d\n", (i+1)*100);
+			// printf("%d\n", (i+1)*100);
 			acc += (i+1)*100;
 		}
 	}
@@ -49,7 +49,47 @@ reflection( CharMatrix cm ) {
 			if (!found) break;
 		}
 		if ( found ){
-			printf("%d\n", i+1);
+			// printf("%d\n", i+1);
+			acc += i+1;
+		}
+	}
+
+	return acc;
+}
+
+int
+reflection_pt2( CharMatrix cm ) {
+	
+	int acc = 0;
+	int found;
+
+	// horizontal
+	for ( int i = 0; i<(cm.line_num-1); ++i ) {
+		int smudge = 0;
+		for ( int j = i, k = i+1; j>=0 && k<cm.line_num; --j, ++k ){
+			for ( int l = 0; l<cm.width; ++l ) {
+				if ( cm.matrix[j][l] != cm.matrix[k][l] )
+					smudge++;
+			}
+		}
+		if ( smudge == 1 ) {
+			// printf("%d\n", (i+1)*100);
+			acc += (i+1)*100;
+		}
+	}
+
+	// vertical
+	for ( int i = 0; i<(cm.width-1); ++i ) {
+		int smudge = 0;
+		for ( int j = i, k = i+1; j>=0 && k<cm.width; --j, ++k ){
+			for ( int l = 0; l<cm.line_num; ++l ) {
+				if ( cm.matrix[l][j] != cm.matrix[l][k] ) 
+					smudge++;
+				if ( smudge > 1 ) found = 0;
+			}
+		}
+		if ( smudge == 1 ){
+			// printf("%d\n", i+1);
 			acc += i+1;
 		}
 	}
@@ -66,10 +106,17 @@ part_1_solution( CharMatrix maps[MAPS] ) {
 		int r = reflection(maps[i]);
 		acc+=r;
 		//printf("\n%d\n", r);
-		charmatrix_print(maps[i]);
+		// charmatrix_print(maps[i]);
 	}
 	printf("Part 1 solution: %lu\n", acc);
 }
+
+void
+part_2_solution ( CharMatrix maps[MAPS] ) {
+	unsigned long acc = 0;
+	for ( int i = 0; i<MAPS; acc+=reflection_pt2(maps[i++]));
+	printf("Part 2 solution: %lu\n", acc);
+} 
 
 int
 main(int argc, char *argv[]){
@@ -95,6 +142,7 @@ main(int argc, char *argv[]){
 	}
 
 	part_1_solution(maps);
+	part_2_solution(maps);
 
 	for ( int i = 0; i<MAPS; ++i) {
 		charmatrix_free(&(maps[i]));
