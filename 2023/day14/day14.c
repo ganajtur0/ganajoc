@@ -10,6 +10,17 @@
 	#define X 100
 #endif
 
+int
+total_load (char dish[X][X]) {
+	int total = 0;
+	for ( int i = 0; i<X; ++i ) {
+		for ( int j = 0; j<X; ++j ) {
+			if (dish[i][j] == 'O') total+=(X-i);
+		}
+	}
+	return total;
+}
+
 void
 part_1_solution(char dish[X][X]) {
 	int acc = 0;
@@ -140,26 +151,24 @@ main(int argc, char *argv[]){
 
 	putchar('\n');
 
+	char states[1000][X][X];
+	// int state_len;
+
 	// part_1_solution(dish);
-	
-	char cycle1[X][X];
-	for ( int i = 0; i<X; ++i ) {
-		for ( int j = 0; j<X; ++j ) {
-			cycle1[i][j] = dish[i][j];
-		} 
+
+	for ( int c = 0; c<1000; ++c ) {
+		for ( int i = 0; i<X; ++i ) {
+			for ( int j = 0; j<X; ++j ) {
+				states[c][i][j] = dish[i][j];
+			} 
+		}
+		cycle(dish);
+		for ( int _c = 0; _c < c; ++c ) {
+			if ( dish_compare(states[_c], dish) ) {
+				printf("dish after cycle %d = state at cycle %d\n", c, _c);
+			}
+		}
 	}
-
-
-	for ( int i = 0; i<1000; ++i) {
-		printf("%d\n", i );
-		cycle(cycle1);
-		cycle(dish);
-		cycle(dish);
-		cycle(dish);
-		if ( dish_compare(dish, cycle1) ) { printf("Repeats after %d cycles\n", i*3); break; }
-	}
-
-
 
 	return 0;
 }
