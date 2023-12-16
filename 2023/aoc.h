@@ -128,6 +128,14 @@ charmatrix_print( CharMatrix cm ) {
     }
 }
 
+static inline void
+char2d_print( char **m, int y, int x ) {
+    for ( int i = 0; i<y; ++i ) {
+        for ( int j = 0; j<x; putchar(m[i][j++]));
+        putchar('\n');
+    }
+}
+
 static inline int
 line_is_empty( char *line ) {
 	while ( *line != '\0' ){
