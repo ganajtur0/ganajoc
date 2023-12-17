@@ -66,6 +66,20 @@ size_t getline(char **lineptr, size_t *n, FILE *stream) {
 #define PRINT_ERROR(...) fprintf(stderr, __VA_ARGS__)
 
 typedef
+enum {
+    N,
+    S,
+    W,
+    E
+} Direction;
+
+typedef
+struct {
+    int x;
+    int y;
+} Point;
+
+typedef
 struct {
     int width;
     int height;
