@@ -48,10 +48,13 @@ print_vis( char map[X][X] ) {
 
 Node
 heap_pop_min( Node *heap, int *h_size ) {
-	int i, index, d_min = INT_MAX;
+	int i, index, s_min = INT_MAX, d_min = INT_MAX;
 	for ( i = 0; i<*h_size; ++i) {
 		if ( heap[i].dist < d_min ) {
 			d_min = heap[i].dist;
+			index = i;
+		} else if ( heap[i].dist == d_min && heap[i].steps < s_min ){
+			s_min = heap[i].dist;
 			index = i;
 		}
 	}
@@ -140,7 +143,7 @@ main(int argc, char *argv[]){
 	dists[0][0] = 0;
 	parents[0][0].x = -1;
 	parents[0][0].y = -1;
-
+	/*
 	dists[0][1] = 0;
 	parents[0][1].x = 0;
 	parents[0][1].y = 0;
@@ -148,14 +151,19 @@ main(int argc, char *argv[]){
 	dists[1][0] = 0;
 	parents[1][0].x = 0;
 	parents[1][0].y = 0;
+	*/
 
 	Node n;
-	// n.p.x = 0; n.p.y = 0; n.d = E; n.dist = 0; n.steps = 0;
+	n.p.x = 0; n.p.y = 0; n.d = E; n.dist = 0; n.steps = 0;
+	heap[h_size++] = n;
+	
+	/*
 	n.p.x = 1; n.p.y = 0; n.d = E; n.dist = 0; n.steps = 0;
 	heap[h_size++] = n;
 
 	n.p.x = 0; n.p.y = 1; n.d = S; n.dist = 0; n.steps = 0;
 	heap[h_size++] = n;
+	*/
 	
 	while ( h_size > 0 ) {
 
@@ -183,7 +191,7 @@ main(int argc, char *argv[]){
 				nn.p.x = nx; nn.p.y = ny; nn.dist = dists[ny][nx]; nn.d = directions[i];
 
 				if ( n.d == nn.d ) nn.steps = n.steps+1;
-				else nn.steps = 0;
+				else nn.steps = 1;
 
 				heap[h_size++] = nn;
 
