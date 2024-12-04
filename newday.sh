@@ -15,7 +15,7 @@ cd $newdir
 mkdir exe
 
 touch i
-curl --cookie "session=$(cat ../aoc_cookie.txt)" "$(echo `date +https://adventofcode.com/%Y/day/%d/input` | sed 's/\/0/\//g')" > i
+curl --cookie "session=$(cat /home/sanyi/Coding/C/ganajoc/aoc_cookie.txt)" "$(echo `date +https://adventofcode.com/%Y/day/%d/input` | sed 's/\/0/\//g')" > i
 
 touch test
 
