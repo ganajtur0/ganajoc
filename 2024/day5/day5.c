@@ -27,6 +27,16 @@ swap(int *a, int *b) {
 	*b = tmp;
 }
 
+bool
+valid(int pages[PAGES], int len, int ruleset[100][RULES]) {
+	for ( int i = 0; i<len-1; i++ ) {
+		if (!rule_contains(ruleset[pages[i]], pages[i+1])) {
+			return false;
+		}
+	}
+	return true;
+}
+
 int
 check_pages(int pages[PAGES], int len, int ruleset[100][RULES]) {
 	for ( int i = 0; i<len-1; i++ ) {
@@ -40,18 +50,23 @@ check_pages(int pages[PAGES], int len, int ruleset[100][RULES]) {
 int
 correct_order(int pages[PAGES], int len, int ruleset[100][RULES]) {
 	bool toggle = false;
-	for ( int i = 0; i<len-1; i++ ) {
-		if (!rule_contains(ruleset[pages[i]], pages[i+1])) {
-			toggle = true;
-			swap(&(pages[i]), &(pages[i+1]));
+	while (!valid(pages, len, ruleset)) {
+		toggle = true;
+		for ( int i = 0; i<len-1; i++ ) {
+			if (!rule_contains(ruleset[pages[i]], pages[i+1])) {
+	
+				swap(&(pages[i]), &(pages[i+1]));
+			}
 		}
 	}
+	/*
 	if (toggle) {
 		for ( int j = 0; j<len; j++ ) {
 			printf("%d ", pages[j]);
 		}
 	}
-	putchar('\n');
+	*/
+	// putchar('\n');
 	return toggle ? pages[(len/2)] : 0;
 }
 
