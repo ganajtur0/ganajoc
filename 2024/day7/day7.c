@@ -14,102 +14,101 @@
 void
 lshift_opps(int opps[OPPS], int index) {
 	int i;
-	for ( i = index; i<OPPS-1 && opps[i+1] != 0; i++) {
+	for ( i = index; i<OPPS-1 && opps[i] != 0; i++) {
 		opps[i] = opps[i+1];
 	}
-	opps[i] = 0;
+	opps[i] = -1;
 }
 
 void
 lshift_bits(int *bits, int len, int index) {
+	if (index >= len)
+		return;
 	int i = index;
-	for ( i = index; i<len-1; i++) {
+	for ( i = index; i<len-1 && bits[i] != 0; i++) {
 		bits[i] = bits[i+1];
 	}
-	bits[i] = 0;
+	bits[i] = -1;
 }
 
-int
-combine(int a, int b) {
+unsigned long long
+combine(unsigned long long a, unsigned long long b) {
 
 	static int kapow[10] = {
 		1, 10, 100, 1000, 10000, 100000,
 		100000, 1000000, 10000000, 100000000
 	};
 
-	int i = b;
-	int j = 0;
+	unsigned long long i = b;
+	unsigned long long j = 0;
 
 	do {
 		i /= 10;
 		j++;
 	} while (i > 0);
 
-	return a * kapow[j] + b;
+	return (a * kapow[j] + b);
 }
 
 int
 unify(int opps[OPPS], int len, int *bits) {
-
 	int i;
+/*
 	printf("unifying:\n");
 	for ( i = 0; i<len; i++ ) {
 		printf("%d ", opps[i]);
 		printf(bits[i] == 0 ? "+ " : (bits[i] == 1 ? "* " : "|| "));
 	}
 	printf("%d\n", opps[i]);
+*/
 
-	for ( i = 0; i<len && opps[i+1] != 0; i++) {
+	for ( i = 0; i<len && opps[i+1] != -1 && bits[i] != -1; i++) {
 		if (bits[i] == 2) {
 			opps[i] = combine(opps[i], opps[i+1]);
 			lshift_opps(opps, i+1);
 			lshift_bits(bits, len, i);
+			i--;
 		}
 	}
 	printf("to:\n");
 	int j;
-	for ( j = 0; j<len; j++ ) {
+	for ( j = 0; j < i; j++ ) {
 		printf("%d ", opps[j]);
 		printf(bits[j] == 0 ? "+ " : bits[j] == 1 ? "* " : "|| ");
 	}
-	printf("%d\n", opps[j+1]);
+	printf("%d\n", opps[j]);
 	return i;
 
 }
 
 void
-solve_p2(unsigned long long res, int opps[OPPS], int len, int *bits, int iter, bool *flag) {
+solve_p2(unsigned long long res, unsigned long long opps[OPPS], int len, int *bits, int iter, bool *flag) {
 
 	if (iter == len) {
 
-		int opps_tmp[OPPS];
-		int *bits_tmp = malloc(sizeof(int) * len);
+		unsigned long long opps_tmp[OPPS];
+		memcpy(opps_tmp, opps, OPPS*sizeof(unsigned long long));
 
-		memcpy(opps_tmp, opps, OPPS);
-		memcpy(bits_tmp, bits, len);
+		int i;
 
-		int n_len = unify(opps, len, bits);
-
-		unsigned long long calc = opps[0];
-		for (int i = 0; i<n_len; i++) {
-			if (bits[i] == 0) {
-				calc += opps[i+1];
-			}
-			else {
-				calc *= opps[i+1];
+		for ( i = 0; i<len; i++ ) {
+			switch (bits[i]) {
+			case 0:
+				opps_tmp[i+1] = opps_tmp[i] + opps_tmp[i+1];
+				break;
+			case 1:
+				opps_tmp[i+1] = opps_tmp[i] * opps_tmp[i+1];
+				break;
+			case 2:
+				opps_tmp[i+1] = combine(opps_tmp[i], opps_tmp[i+1]);
+				break;
 			}
 		}
-		// printf("%llu : ", calc);
-		if (calc == res) {
-			printf("%llu\n", res);
+
+		if (opps_tmp[i] == res) {
+			// printf("%llu\n", res);
 			*flag = true;
-		}/*
-		else {
-			printf("INCORRECT\n");
-		}*/
-		memcpy(opps, opps_tmp, OPPS);
-		memcpy(bits, bits_tmp, len);
-		free(bits_tmp);
+		}
 
 		return;
 	}
@@ -131,7 +130,7 @@ parse_p2(char *line, size_t len) {
 	for (i = 0; line[i] != ':'; i++)
 		buff[i] = line[i];
 	unsigned long long res = atoll(buff);
-	int opps[OPPS] = {0};
+	unsigned long long opps[OPPS] = {0};
 	i+=2;
 	int j;
 	char *str = &(line[i]), *token;
@@ -140,7 +139,7 @@ parse_p2(char *line, size_t len) {
 		token = strtok_r(str, " ", &saveptr);
 		if (token == NULL)
 			break;
-		opps[j] = atoi(token);
+		opps[j] = atoll(token);
 	}
 	
 	bool flag = false;
