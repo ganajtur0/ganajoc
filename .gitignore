@@ -1,4 +1,6 @@
 **/exe/
 **/Makefile
+**/target/
+**/Cargo.lock
 aoc_cookie.txt
 aoc_cookie.sh
